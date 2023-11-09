@@ -8,11 +8,11 @@
     $router = new Router();
 
     $router->addRoute('movies',                 'GET',    'MovieAPIController',     'getMovies');
-    $router->addRoute('movies',                 'POST',   'MovieAPIController',     'createMovie');
+    $router->addRoute('movies/add',             'POST',   'MovieAPIController',     'createMovie');
     $router->addRoute('movies/:ID',             'GET',    'MovieAPIController',     'getMovies');
     $router->addRoute('movies/genre/:GENRE',    'GET',    'MovieAPIController',     'getByGenre');
-    $router->addRoute('movies/:ID',             'PUT',    'MovieAPIController',     'updateMovie');
-    $router->addRoute('movies/:ID',             'DELETE', 'MovieAPIController',     'deleteMovie');
+    $router->addRoute('movies/update',          'PUT',    'MovieAPIController',     'updateMovie');
+    // $router->addRoute('movies/:ID',             'DELETE', 'MovieAPIController',     'deleteMovie');
 
     $router->addRoute('genres',                 'GET',    'MovieAPIController',     'getGenres');
     // $router->addRoute('genres',     'POST',   'GenreAPIController', 'create');

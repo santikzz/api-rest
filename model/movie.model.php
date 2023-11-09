@@ -12,22 +12,76 @@ class MovieModel
         $this->db = db_connect();
     }
 
-    public function getMovies($order = null)
-    {   
-        // check if sorting order
+    public function getMovies($orderby, $order, $limit, $offset)
+    {
+
         $sql_order = "";
+        $sql_limit_offset = "";
+
         $order = strtoupper($order);
-        if($order == "ASC"){
-            $sql_order = "ORDER BY p.nombre ASC";
+        switch ($order) {
+            case "ASC":
+                $order_dir = "ASC";
+                break;
+            case "DESC":
+                $order_dir = "DESC";
+                break;
+            default:
+                $order_dir = "ASC";
+                break;
         }
-        if($order == "DESC"){
-            $sql_order = "ORDER BY p.nombre DESC";
+
+        switch ($orderby) {
+
+            case "nombre":
+                $sql_order = "ORDER BY p.nombre $order_dir";
+                break;
+
+            case "autor":
+                $sql_order = "ORDER BY p.autor $order_dir";
+                break;
+
+            case "id":
+                $sql_order = "ORDER BY p.id $order_dir";
+                break;
+
+            case "genero":
+                $sql_order = "ORDER BY genero $order_dir";
+                break;
+
+            default:
+                $sql_order = "";
+                break;
+
         }
+
+        if ($limit != null && $limit > 0) {
+
+            try {
+
+                $sql_limit_offset = "LIMIT " . intval($limit);
+
+                if ($offset != null && $offset > 0) {
+                    try {
+                        $sql_limit_offset .= " OFFSET " . intval($offset);
+                    } catch (Exception $e) {
+                        $sql_limit_offset = "";
+                    }
+                }
+
+            } catch (Exception $e) {
+                $sql_limit_offset = "";
+            }
+
+        }
+
 
         $stmt = $this->db->prepare("SELECT p.id, p.nombre, p.autor, g.nombre AS 'genero', p.image FROM pelicula p
             LEFT JOIN genero g ON p.id_genero = g.id
             $sql_order
+            $sql_limit_offset
         ");
+
         $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_OBJ);
         return $result;
@@ -35,7 +89,10 @@ class MovieModel
 
     public function getMovie($id)
     {
-        $stmt = $this->db->prepare("SELECT id, nombre, autor, id_genero, image FROM pelicula WHERE id = :id");
+        $stmt = $this->db->prepare("SELECT p.id, p.nombre, p.autor, g.nombre AS 'genero', p.image FROM pelicula p
+            LEFT JOIN genero g ON p.id_genero = g.id
+            WHERE p.id = :id
+        ");
         $stmt->execute(["id" => $id]);
         $result = $stmt->fetch(PDO::FETCH_OBJ);
         return $result;
@@ -73,10 +130,10 @@ class MovieModel
 
         $sql_order = "";
         $order = strtoupper($order);
-        if($order == "ASC"){
+        if ($order == "ASC") {
             $sql_order = "ORDER BY nombre ASC";
         }
-        if($order == "DESC"){
+        if ($order == "DESC") {
             $sql_order = "ORDER BY nombre DESC";
         }
 

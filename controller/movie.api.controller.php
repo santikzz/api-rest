@@ -17,34 +17,53 @@ class MovieAPIController extends APIController
         $this->auth = new APIAuthHelper();
     }
 
-    public function getMovies($params = [])
+    public function isLoggedIn()
     {
-        // USER CHECK
+        //USER CHECK
         $user = $this->auth->getCurrentUser();
         if (!$user) {
             $this->view->response(["error" => "unauthorized"], 401);
-            return;
+            return false;
         }
         if ($user->isAdmin != 1) {
             $this->view->response(["error" => "foribidden"], 403);
-            return;
+            return false;
         }
+    }
 
+    public function getMovies($params = [])
+    {
         if (empty($params[":ID"])) { // GET ALL MOVIES
 
-            // GET SORTING ORDER
+            $orderby = null;
             $order = null;
-            if(isset($_GET["order"])){
+            $limit = null;
+            $offset = null;
+
+            if (isset($_GET["orderby"])){
+                $orderby = $_GET["orderby"];
+            }
+
+            if (isset($_GET["order"])){
                 $order = $_GET["order"];
             }
 
-            $movies = $this->model->getMovies($order);
+            if (isset($_GET["limit"])){
+                $limit = $_GET["limit"];
+            }
+
+            if (isset($_GET["offset"])){
+                $offset = $_GET["offset"];
+            }
+
+
+            $movies = $this->model->getMovies($orderby, $order, $limit, $offset);
             $this->view->response($movies, 200);
 
             return;
-        
-       
-        }else{ // GET MOVIE BY ID
+
+
+        } else { // GET MOVIE BY ID
             $id = $params[":ID"];
             $movie = $this->model->getMovie($id);
             if (!empty($movie)) {
@@ -59,18 +78,6 @@ class MovieAPIController extends APIController
 
     public function getByGenre($params = [])
     {
-
-        $user = $this->auth->getCurrentUser();
-        if (!$user) {
-            $this->view->response(["error" => "unauthorized"], 401);
-            return;
-        }
-
-        if ($user->isAdmin != 1) {
-            $this->view->response(["error" => "foribidden"], 403);
-            return;
-        }
-
         if (empty($params[":GENRE"])) {
             $this->view->response(["error" => "missing parameters"], 404);
 
@@ -97,13 +104,12 @@ class MovieAPIController extends APIController
 
     public function deleteMovie($params = [])
     {
-
         $id = $params[':ID'];
         $movie = $this->model->getMovie($id);
 
         if ($movie) {
             $this->model->deleteMovie($id);
-            $this->view->reponse(["message" => "message':'movie $id deleted successfully"], 200);
+            $this->view->response(["message" => "message':'movie $id deleted successfully"], 200);
         } else {
             $this->view->response(["error" => "movie $id not found"], 404);
         }
@@ -113,13 +119,16 @@ class MovieAPIController extends APIController
 
     public function createMovie($params = [])
     {
+        if(!$this->isLoggedIn()){
+            return;
+        }
 
-        $body = $_POST;
+        $data = $this->getData();
 
-        $title = $body["title"];
-        $author = $body["author"];
-        $genre = $body["genre"];
-        $image_url = $body["image_url"];
+        $title = $data["title"];
+        $author = $data["author"];
+        $genre = $data["genre"];
+        $image_url = $data["image_url"];
 
         if (empty($title) || empty($author) || empty($genre) || empty($image_url)) {
             $this->view->response(["error" => "missing parameters"], 400);
@@ -144,40 +153,36 @@ class MovieAPIController extends APIController
 
     public function updateMovie($params = [])
     {
-        $id = $params[":ID"];
-        $movie = $this->model->getMovie($id);
+        if(!$this->isLoggedIn()){
+            return;
+        }
 
+        $data = $this->getData();
+        $id = $data["id"];
+
+        $movie = $this->model->getMovie($id);
         if ($movie) {
-            $data = $this->getData();
-            $title = $data->title;
-            $author = $data->author;
-            $genre_id = $data->genre_id;
-            $image_url = $data->image_url;
+
+            $title = $data["title"];
+            $author = $data["author"];
+            $genre_id = $data["genre_id"];
+            $image_url = $data["image_url"];
 
             $this->model->updateMovie($id, $title, $genre_id, $author, $image_url);
+            $movie = $this->model->getMovie($id);
+            $this->view->response($movie, 200);
 
-            $this->view->response(["message" => "message':'movie $id updated successfully"], 200);
         } else {
             $this->view->response(["error" => "movie $id not found"], 404);
         }
+
     }
 
     public function getGenres($params = [])
     {
-
-        $user = $this->auth->getCurrentUser();
-        if (!$user) {
-            $this->view->response(["error" => "unauthorized"], 401);
-            return;
-        }
-        if ($user->isAdmin != 1) {
-            $this->view->response(["error" => "foribidden"], 403);
-            return;
-        }
-
         // GET SORTING ORDER
         $order = null;
-        if(isset($_GET["order"])){
+        if (isset($_GET["order"])) {
             $order = $_GET["order"];
         }
 
