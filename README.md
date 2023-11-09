@@ -8,7 +8,7 @@ Method  | Endpoint | Description | Parameters | Auth
 `GET` | api/user/token | Get user access token | username*, password* | Basic bearer
 
 Parameters with (*) are required
-
+Default admin user ( username: **admin**, password: **admin**)
 
 # Examples
 ---------------
