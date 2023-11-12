@@ -12,7 +12,7 @@ Default admin user ( username: **admin**, password: **admin**)
 
 # Examples
 ---------------
-#### GET `api/movies`
+### GET `api/movies`
 ###### Optional GET Parameters
 `orderby` (id, nombre, autor, genero)
 `order` (asc, desc)
@@ -40,7 +40,7 @@ Default admin user ( username: **admin**, password: **admin**)
 ...
 ```
 
-#### GET `api/movies/id/:ID`
+### GET `api/movies/id/:ID`
 ```json
 {
     "id": 2,
@@ -51,7 +51,7 @@ Default admin user ( username: **admin**, password: **admin**)
 }
 ```
 
-#### GET `api/movies/movies/genre/:GENRE`
+### GET `api/movies/movies/genre/:GENRE`
 ```json
 [
     {
@@ -63,7 +63,7 @@ Default admin user ( username: **admin**, password: **admin**)
 ]
 ```
 
-#### GET `api/movies/genres`
+### GET `api/movies/genres`
 ```json
 [
     {
@@ -88,17 +88,16 @@ Default admin user ( username: **admin**, password: **admin**)
     }
 ]
 ```
-#### POST `api/movies/add` 
+### POST `api/movies/add` 
 Auth required* (Bearer token)
 Required post parameters -> title, author, genre, image_url
 
-#### POST `api/movies/update` 
+### POST `api/movies/update` 
 Auth required* (Bearer Token) from `api/user/token`
 Required post parameters -> id, title, author, genre, image_url
 
-#### GET `api/user/token` 
-Auth required* (Basic Auth)
-Required post parameters -> id, title, author, genre, image_url
+### GET `api/user/token` 
+Auth required* (Basic Auth) default username and password
 ```json
 {
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJpc0FkbWluIjoxLCJleHAiOjE2OTk4MzEzMTF9.Evl51F275ApPUeG0LQ4m8kCT6SDl8OF0bzYKKmyjdcw"
