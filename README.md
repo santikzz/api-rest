@@ -1,10 +1,10 @@
 Method  | Endpoint | Description | Parameters | Auth
 ------------- | ------------- | ------------- | ------------- | -------------
-`GET`  | api/movies  | List all items | orderby, order, limit, offset | none
-`GET`  | api/movies/:ID  | Get item by id | n/a | none
-`GET`  | api/movies/genre/:GENRE | List all items by category | orderby, order, limit, offset | none
-`POST` | api/movies/add | Add new item | name*, author*, genre*, image* | JWT
-`PUT` | api/movies/edit | Edit item | id*, name*, author*, genre_id*, image* | JWT
+`GET`  | api/movies  | List all movies | orderby, order, limit, offset | none
+`GET`  | api/movies/:ID  | Get movie by id | n/a | none
+`GET`  | api/movies/genre/:GENRE | List all movies by genre | orderby, order, limit, offset | none
+`POST` | api/movies/add | Add new movie | name*, author*, genre*, image* | Bearer Token
+`PUT` | api/movies/update | Edit movie | id*, name*, author*, genre_id*, image* | Bearer Token
 `GET` | api/user/token | Get user access token | username*, password* | Basic bearer
 
 Parameters with (*) are required
@@ -12,7 +12,7 @@ Default admin user ( username: **admin**, password: **admin**)
 
 # Examples
 ---------------
-#### GET /movies: `https://example.com/api/movies`
+#### GET `api/movies`
 ###### Optional GET Parameters
 `orderby` (id, nombre, autor, genero)
 `order` (asc, desc)
@@ -40,7 +40,7 @@ Default admin user ( username: **admin**, password: **admin**)
 ...
 ```
 
-#### GET /movies/id/:ID : `https://example.com/api/movies/2`
+#### GET `api/movies/id/:ID`
 ```json
 {
     "id": 2,
@@ -51,7 +51,7 @@ Default admin user ( username: **admin**, password: **admin**)
 }
 ```
 
-#### GET /movies/movies/genre/:GENRE : `https://example.com/api/movies/genre/suspense`
+#### GET `api/movies/movies/genre/:GENRE`
 ```json
 [
     {
@@ -63,7 +63,7 @@ Default admin user ( username: **admin**, password: **admin**)
 ]
 ```
 
-#### GET /movies/genres : `https://example.com/api/genres`
+#### GET `api/movies/genres`
 ```json
 [
     {
@@ -88,4 +88,19 @@ Default admin user ( username: **admin**, password: **admin**)
     }
 ]
 ```
+#### POST `api/movies/add` 
+Auth required* (Bearer token)
+Required post parameters -> title, author, genre, image_url
 
+#### POST `api/movies/update` 
+Auth required* (Bearer Token) from `api/user/token`
+Required post parameters -> id, title, author, genre, image_url
+
+#### GET `api/user/token` 
+Auth required* (Basic Auth)
+Required post parameters -> id, title, author, genre, image_url
+```json
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyaWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJpc0FkbWluIjoxLCJleHAiOjE2OTk4MzEzMTF9.Evl51F275ApPUeG0LQ4m8kCT6SDl8OF0bzYKKmyjdcw"
+}
+``` 

@@ -165,12 +165,21 @@ class MovieAPIController extends APIController
 
             $title = $data["title"];
             $author = $data["author"];
-            $genre_id = $data["genre_id"];
+            $genre = $data["genre"];
             $image_url = $data["image_url"];
 
-            $this->model->updateMovie($id, $title, $genre_id, $author, $image_url);
-            $movie = $this->model->getMovie($id);
-            $this->view->response($movie, 200);
+            $genre_id = $this->model->getGenreID($genre);
+
+            if ($genre_id) {
+
+                $this->model->updateMovie($id, $title, $genre_id, $author, $image_url);
+                $movie = $this->model->getMovie($id);
+                $this->view->response($movie, 200);
+            
+            }else{
+                $this->view->response(["error" => "invalid genre $genre"], 400);
+                return;
+            }
 
         } else {
             $this->view->response(["error" => "movie $id not found"], 404);

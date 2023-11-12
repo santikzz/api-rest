@@ -13,16 +13,8 @@
     $router->addRoute('movies/genre/:GENRE',    'GET',    'MovieAPIController',     'getByGenre');
     $router->addRoute('movies/update',          'PUT',    'MovieAPIController',     'updateMovie');
     // $router->addRoute('movies/:ID',             'DELETE', 'MovieAPIController',     'deleteMovie');
-
     $router->addRoute('genres',                 'GET',    'MovieAPIController',     'getGenres');
-    // $router->addRoute('genres',     'POST',   'GenreAPIController', 'create');
-    // $router->addRoute('genres/:ID', 'GET',    'GenreAPIController', 'get'   );
-    // $router->addRoute('genres/:ID', 'PUT',    'GenreAPIController', 'update');
-    // $router->addRoute('genres/:ID', 'DELETE', 'GenreAPIController', 'delete');
-
-
     
     $router->addRoute('user/token', 'GET',    'UserAPIController', 'getToken');
     
-
     $router->route($_GET['resource']        , $_SERVER['REQUEST_METHOD']);
